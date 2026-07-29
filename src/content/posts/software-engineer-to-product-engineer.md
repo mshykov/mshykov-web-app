@@ -2,10 +2,10 @@
 title: "From Software Engineer to Product Engineer: A Practical Transition Path"
 description: "A practical path from software engineer to product engineer: four stages, real stories, and an outcome checklist to run before your next task."
 slug: "software-engineer-to-product-engineer"
-publishedAt: "2026-07-31"
+publishedAt: "2026-07-29"
 tags: ["product engineering", "career growth", "engineering leadership", "product thinking"]
 excerpt: "Product engineer is not a different profession. It is an engineer who asks a different question. Here is the four-stage path I have watched work, and the checklist that trains it."
-published: false
+published: true
 ---
 
 # From Software Engineer to Product Engineer: A Practical Transition Path
