@@ -104,7 +104,13 @@ const main = async () => {
     for (const route of routes) {
       await page.goto(`http://localhost:${PORT}${route}`, { waitUntil: 'networkidle0' });
       await page.waitForSelector('#root > *', { timeout: 15000 });
-      const html = await page.evaluate(() => '<!doctype html>\n' + document.documentElement.outerHTML);
+      const html = await page.evaluate((r) => {
+        // Stamp the snapshot with its route: dist/index.html doubles as the
+        // SPA fallback for unknown paths, so main.tsx must only hydrate when
+        // the served snapshot actually matches location.pathname.
+        document.getElementById('root').setAttribute('data-prerender-route', r);
+        return '<!doctype html>\n' + document.documentElement.outerHTML;
+      }, route);
       const title = await page.title();
       if (!title || title === 'not found') throw new Error(`prerender: ${route} rendered without a title`);
       snapshots.set(route, html);
