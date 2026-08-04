@@ -18,7 +18,7 @@ redirect/rules deploy artifacts.
 ```bash
 npm install        # install dependencies
 npm run dev        # Vite dev server with HMR
-npm run build      # tsc -b (typecheck) then vite build → dist/
+npm run build      # tsc -b (typecheck), vite build, then prerender routes → dist/
 npm run lint       # ESLint over the repo
 npm run preview    # serve the production build locally
 npm test           # Vitest smoke suite over src/lib/ + static post registry
