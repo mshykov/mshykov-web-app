@@ -24,7 +24,7 @@ the pure helpers in `src/lib/` (consent + date formatting); the primary gate rem
 
 ```bash
 npm run dev        # Vite dev server with HMR
-npm run build      # tsc -b (typecheck all tsconfig projects) then vite build → dist/
+npm run build      # tsc -b (typecheck), vite build, then prerender (scripts/prerender.mjs, needs Chrome) → dist/
 npm run lint       # ESLint over the repo
 npm run preview    # serve the production build locally
 npm test           # Vitest smoke suite over src/lib/ (consent + date helpers)
@@ -61,7 +61,7 @@ Security rules (`firestore.rules`): published posts are world-readable; unpublis
 - **Per-route metadata**: the base `<head>` tags live statically in `index.html` (representing Home). Each page renders `<Seo title description path />` (`src/components/Seo.tsx`), whose effect updates `document.title`, the description, canonical, and og/twitter title/description/url on navigation — so each route has a unique, accurate title/description (Google renders JS). **When adding a route, render `<Seo>` in it** (use `noindex` for non-indexable pages like the 404).
 - **Crawlability**: `public/robots.txt` (allows all + Sitemap line) and `public/sitemap.xml` (lists the routes) ship at the site root — Firebase serves them as static files before the SPA rewrite. The catch-all route (`*` → `NotFound`) renders `noindex` to avoid soft-404s.
 - **Structured data**: a `WebSite` + `Person` JSON-LD `@graph` in `index.html` (static, sitewide). Update it if the role, employer, or social profiles change.
-- **Limitation**: non-JS social scrapers only see `index.html`'s static (Home) OG tags; per-route social previews would require SSR/prerender, which this static SPA intentionally doesn't do.
+- **Prerendering**: `scripts/prerender.mjs` runs inside `npm run build` — it snapshots every route in `public/sitemap.xml` with headless Chrome (system Chrome via puppeteer-core) and writes per-route static HTML into `dist/` (`blog.html`, `blog/<slug>.html`; flat `.html` files, not directory indexes, so Cloudflare Pages serves the exact slash-less URLs without 308s). Non-JS crawlers get full content + per-route meta; `src/main.tsx` hydrates when `#root` has children. The sitemap is the prerender route list — adding a route to it is what makes it prerender.
 
 ## Styling & dark mode
 
