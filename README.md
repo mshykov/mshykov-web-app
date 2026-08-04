@@ -46,7 +46,6 @@ src/
   content/       Static Markdown posts + post registry
   pages/         Route views (Home, Experience, Blog, PostArticle, NotFound)
   lib/           Pure helpers + lazy analytics boundary + tests
-  types/         Shared TypeScript interfaces (Post, User)
   firebase.ts    Analytics-only Firebase init, dynamically imported after consent
   index.css      Single stylesheet: @theme tokens, @font-face, component classes
   App.tsx        Router; main.tsx mounts it; test-setup.ts bootstraps Vitest
