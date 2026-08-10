@@ -15,6 +15,9 @@ Project-specific docs (self-contained) live in `docs/`:
 - [docs/developer.md](docs/developer.md)
 - [docs/security.md](docs/security.md)
 - [docs/retro.md](docs/retro.md) — session retro + workflow lessons
+- [docs/tech-debt.md](docs/tech-debt.md) — prioritized debt register + phased plan
+- [docs/session-handoff.md](docs/session-handoff.md) — **start here in a new session**: current state, merge/Dependabot playbooks, open threads
+- [docs/next-session-prompt.md](docs/next-session-prompt.md) — ready-to-paste prompts per thread
 
 Each file above is self-contained. A minimal Vitest smoke suite (`npm test`) covers
 the pure helpers in `src/lib/`, the static post registry, and the security-header
