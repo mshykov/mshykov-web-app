@@ -86,13 +86,17 @@ right now; the triage that worked:
 2. **Majors get scrutiny.** Two are permanently held via `ignore` rules in
    `.github/dependabot.yml`, both for real reasons documented there:
    `lucide-react` (v1 removed brand glyphs → `TS2305`) and `typescript`
-   (v7 vs `typescript-eslint` peer range → `npm ci` ERESOLVE). If a new
-   breaking major appears, close the PR *and* add an ignore rule, or it comes
-   back every week.
-3. **A `sonarcloud` failure on a Dependabot PR is expected to pass now** —
-   the token guard in `.github/workflows/sonarcloud.yml` handles the fact that
-   GitHub withholds secrets from Dependabot runs. If it *fails*, something
-   else is wrong; don't remove the guard.
+   (v7 vs `typescript-eslint` peer range → `npm ci` ERESOLVE). Confirm an
+   incompatibility from the CI log before giving up on an update — a stale
+   branch or a fixable repo-side issue is more common. Once confirmed, close
+   the PR *and* add an ignore rule, or it comes back every week.
+3. **On Dependabot PRs the `sonarcloud` job passes without scanning.**
+   GitHub withholds repo secrets from Dependabot runs, so `SONAR_TOKEN` is
+   empty; the workflow's `if: env.SONAR_TOKEN != ''` guard skips the scan and
+   an explicit skip step keeps the required job green (master is re-scanned on
+   the post-merge push). So a *failing* `sonarcloud` job on a Dependabot PR
+   means something other than the missing token — read the log. Don't remove
+   the guard.
 4. Merge one, `@dependabot rebase` the next (see strict-mode note above).
 
 ## Releasing a post
@@ -109,7 +113,13 @@ while it stays invisible on the site (not on `/blog`, its slug 404s with
 4. Remove the "Draft" comment above its import in `src/content/posts.ts`
    (a stale comment is a bug in this repo).
 5. `npm run build && npm test`, verify in the Pages preview, PR, merge.
-6. After deploy: request indexing in Search Console for the new URL.
+6. **Production deploys itself**: merging to `master` triggers
+   `.github/workflows/cloudflare-pages-merge.yml`, which builds and deploys to
+   Cloudflare Pages (project `shykov-dev`, domain `shykov.dev`). Watch that run,
+   then `curl` the live URL to confirm. **`firebase deploy` is not the
+   production path** — it only maintains the legacy `m-shykov.web.app`
+   redirects and Firestore rules, and it is run by hand.
+7. After deploy: request indexing in Search Console for the new URL.
 
 ## Open threads
 

@@ -54,10 +54,13 @@ playbook" and "Merge mechanics" sections of docs/session-handoff.md first —
 branch protection is strict, so PRs must be merged one at a time with a rebase
 between them, and two majors are permanently held for documented reasons.
 
-For each open PR: check whether its build actually passes, merge the safe ones,
-and for anything that breaks the build, close it and add a Dependabot ignore
-rule with the reason (otherwise it returns weekly). Tell me what you merged,
-what you held, and why.
+For each open PR: check whether its build actually passes and merge the safe
+ones. If a build fails, read the CI log and find the cause before deciding —
+a stale branch, a flaky run, or something fixable in the repo are all more
+likely than a genuinely incompatible dependency. Only when you've confirmed the
+new version is incompatible should you close the PR and add a Dependabot ignore
+rule recording the specific reason. Tell me what you merged, what you held,
+what you fixed, and why.
 ```
 
 ---
