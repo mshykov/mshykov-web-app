@@ -22,6 +22,9 @@
  *   serialized into the HTML.
  * - Inline <script> text is preserved byte-for-byte by outerHTML
  *   serialization, so the CSP hashes in public/_headers stay valid.
+ * - No snapshot may reference the snapshot server's own origin. Vite resolves
+ *   lazily-injected modulepreload hints against it, so they are rewritten to
+ *   root-relative paths and the run fails loudly if any slip through.
  * - External requests are blocked during snapshotting (hermetic + fast); GA
  *   still loads normally for real visitors.
  */
@@ -33,6 +36,7 @@ import puppeteer from 'puppeteer-core';
 
 const DIST = resolve(process.cwd(), 'dist');
 const PORT = 45173;
+const ORIGIN = `http://localhost:${PORT}`;
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -58,7 +62,7 @@ const routesFromSitemap = async () => {
 const serveDist = () =>
   new Promise((resolveServer) => {
     const server = createServer(async (req, res) => {
-      const path = new URL(req.url, `http://localhost:${PORT}`).pathname;
+      const path = new URL(req.url, ORIGIN).pathname;
       let file = join(DIST, path);
       if (!extname(path)) file = join(DIST, 'index.html'); // SPA fallback
       try {
@@ -102,17 +106,32 @@ const main = async () => {
 
     const snapshots = new Map();
     for (const route of routes) {
-      await page.goto(`http://localhost:${PORT}${route}`, { waitUntil: 'networkidle0' });
+      await page.goto(`${ORIGIN}${route}`, { waitUntil: 'networkidle0' });
       await page.waitForSelector('#root > *', { timeout: 15000 });
-      const html = await page.evaluate((r) => {
-        // Stamp the snapshot with its route: dist/index.html doubles as the
-        // SPA fallback for unknown paths, so main.tsx must only hydrate when
-        // the served snapshot actually matches location.pathname.
-        document.getElementById('root').setAttribute('data-prerender-route', r);
-        return '<!doctype html>\n' + document.documentElement.outerHTML;
-      }, route);
+      const html = await page.evaluate(
+        (r, origin) => {
+          // Vite's lazy-chunk loader injects <link rel="modulepreload"> whose
+          // href it resolves against the *current* origin — here the snapshot
+          // server. Serialized as-is they ship to production pointing at
+          // http://localhost:<port>: dead resource hints that CSP then blocks
+          // on every page load. Put them back on a root-relative path.
+          for (const el of document.querySelectorAll('link[href], script[src]')) {
+            const attr = el.hasAttribute('href') ? 'href' : 'src';
+            const value = el.getAttribute(attr);
+            if (value.startsWith(origin)) el.setAttribute(attr, value.slice(origin.length));
+          }
+          // Stamp the snapshot with its route: dist/index.html doubles as the
+          // SPA fallback for unknown paths, so main.tsx must only hydrate when
+          // the served snapshot actually matches location.pathname.
+          document.getElementById('root').setAttribute('data-prerender-route', r);
+          return '<!doctype html>\n' + document.documentElement.outerHTML;
+        },
+        route,
+        ORIGIN,
+      );
       const title = await page.title();
       if (!title || title === 'not found') throw new Error(`prerender: ${route} rendered without a title`);
+      if (html.includes(ORIGIN)) throw new Error(`prerender: ${route} still references ${ORIGIN}`);
       snapshots.set(route, html);
       console.log(`prerendered ${route} (${(html.length / 1024).toFixed(0)} KB) — "${title}"`);
     }
