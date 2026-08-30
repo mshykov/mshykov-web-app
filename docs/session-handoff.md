@@ -117,8 +117,8 @@ while it stays invisible on the site (not on `/blog`, its slug 404s with
    `.github/workflows/cloudflare-pages-merge.yml`, which builds and deploys to
    Cloudflare Pages (project `shykov-dev`, domain `shykov.dev`). Watch that run,
    then `curl` the live URL to confirm. **`firebase deploy` is not the
-   production path** — it only maintains the legacy `m-shykov.web.app`
-   redirects and Firestore rules, and it is run by hand.
+   production path** — it only pushes Firestore rules now, by hand; the legacy
+   `m-shykov.web.app` hosting site is retired.
 7. After deploy: request indexing in Search Console for the new URL.
 
 ## Open threads

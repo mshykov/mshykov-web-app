@@ -80,8 +80,6 @@ In one PR:
   the build if a route's HTML doesn't contain its expected text — item 3.
 - Add /blog and one article URL to lighthouserc.json's collect.url — item 5.
   Don't tighten the thresholds; read the threshold note in docs/developer.md.
-- A weekly GitHub Actions cron that curls https://m-shykov.web.app/ and one
-  deep path and fails if either stops being a 301 to shykov.dev — item 2.
 
 Full gate + preview verification, PR, merge when green. Then update
 docs/tech-debt.md to mark those items done.

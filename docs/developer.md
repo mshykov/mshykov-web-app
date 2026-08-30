@@ -48,8 +48,8 @@ npm test           # Vitest smoke suite over src/lib/ + static post registry
 ```
 
 Production deploys run via GitHub Actions → Cloudflare Pages (project `shykov-dev`,
-domain `shykov.dev`) on merge to master. `firebase deploy` now only maintains the
-legacy `m-shykov.web.app` 301 redirects + Firestore rules.
+domain `shykov.dev`) on merge to master. `firebase deploy` now only pushes Firestore
+rules — the legacy `m-shykov.web.app` hosting site is retired.
 
 ## Static analysis (SonarCloud)
 
