@@ -58,8 +58,10 @@ docs/            Self-contained topic docs (seo, design, developer, security, re
 
 ## Architecture
 
-- **Routing** ([`src/App.tsx`](src/App.tsx)): all routes are `lazy()`-loaded under a
-  single `Layout` route (`/` → Home, `/experience`, `/blog`), wrapped in `Suspense`.
+- **Routing** ([`src/App.tsx`](src/App.tsx)): routes are statically imported under a
+  single `Layout` route (`/` → Home, `/experience`, `/blog`). No `lazy()`/`Suspense`:
+  the prerendered HTML is a DOM snapshot, which cannot carry the SSR-only markers
+  React uses to hydrate Suspense boundaries.
   `ScrollToTop` resets scroll on navigation. Hosting rewrites all paths to
   `/index.html`, so deep links resolve as client-side routes.
 - **Layout** ([`src/components/Layout.tsx`](src/components/Layout.tsx)): header/nav/
