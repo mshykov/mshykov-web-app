@@ -25,6 +25,11 @@
  * - No snapshot may reference the snapshot server's own origin. Vite resolves
  *   lazily-injected modulepreload hints against it, so they are rewritten to
  *   root-relative paths and the run fails loudly if any slip through.
+ * - Adjacent text nodes are re-separated with comment nodes before
+ *   serialization. Snapshotting a live DOM loses the boundaries React needs to
+ *   hydrate `{a}{b}` text; without them every such pair is a hydration
+ *   mismatch. The app must also keep <Suspense> out of the tree — its
+ *   boundaries are marked by SSR-only comments a DOM snapshot cannot carry.
  * - External requests are blocked during snapshotting (hermetic + fast); GA
  *   still loads normally for real visitors.
  */
@@ -119,6 +124,23 @@ const main = async () => {
             const attr = el.hasAttribute('href') ? 'href' : 'src';
             const value = el.getAttribute(attr);
             if (value.startsWith(origin)) el.setAttribute(attr, value.slice(origin.length));
+          }
+          // React renders `{a}{b}` as two adjacent text nodes and, when it
+          // server-renders, separates them with a comment so hydration can tell
+          // where one ends. Serializing a live DOM concatenates them instead,
+          // so `{mins}{' min read'}` reaches the client as one "12 min read"
+          // node and hydration reports a text mismatch. Re-insert the
+          // separators the serializer is about to erase.
+          const root = document.getElementById('root');
+          const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+          const needsSeparator = [];
+          for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+            if (n.previousSibling && n.previousSibling.nodeType === Node.TEXT_NODE) {
+              needsSeparator.push(n);
+            }
+          }
+          for (const node of needsSeparator) {
+            node.parentNode.insertBefore(document.createComment(''), node);
           }
           // Stamp the snapshot with its route: dist/index.html doubles as the
           // SPA fallback for unknown paths, so main.tsx must only hydrate when

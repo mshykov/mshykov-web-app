@@ -17,13 +17,6 @@ const navItems = [
 ];
 
 const Layout = () => {
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem('theme') === 'dark';
-    } catch {
-      return false;
-    }
-  });
   const [showCookies, setShowCookies] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -41,17 +34,10 @@ const Layout = () => {
   };
 
   useEffect(() => {
-    // Sync initial preference to document element (don't call setState here)
-    try {
-      const storedTheme = localStorage.getItem('theme');
-      if (storedTheme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    } catch {
-      // no-op: localStorage may be unavailable in some environments
-    }
+    // No theme sync here: index.html's inline script applies the `.dark` class
+    // before React mounts (that is what prevents the FOUC), and toggleTheme
+    // keeps it in step afterwards. Re-reading localStorage on mount would only
+    // duplicate that, and reading it during render breaks hydration outright.
 
     // Show the banner only until the visitor has made a choice. If they
     // previously accepted, (re)initialize analytics for this session.
@@ -68,14 +54,18 @@ const Layout = () => {
   }, []);
 
   const toggleTheme = () => {
-    if (isDark) {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-      setIsDark(false);
-    } else {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-      setIsDark(true);
+    // The `.dark` class on <html> is the single source of truth: index.html's
+    // inline script sets it before React mounts, so reading it here avoids a
+    // second copy of the theme in React state. That copy used to be derived
+    // from localStorage during render, which made the prerendered snapshot
+    // (always light) disagree with a dark-mode visitor's first render and cost
+    // us the whole hydration.
+    const next = !document.documentElement.classList.contains('dark');
+    document.documentElement.classList.toggle('dark', next);
+    try {
+      localStorage.setItem('theme', next ? 'dark' : 'light');
+    } catch {
+      // localStorage may be unavailable (e.g. private mode) — the class still flips
     }
   };
 
@@ -126,7 +116,11 @@ const Layout = () => {
               className="theme-toggle"
               aria-label="Toggle dark mode"
             >
-              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {/* Both icons always render; the dark variant picks one. Branching
+                  on theme here would make the markup differ between the
+                  snapshot and a dark-mode visitor, breaking hydration. */}
+              <Sun className="w-4 h-4 hidden dark:block" />
+              <Moon className="w-4 h-4 dark:hidden" />
             </button>
           </div>
         </div>
