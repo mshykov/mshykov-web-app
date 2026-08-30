@@ -13,5 +13,10 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-4zNhc1HlmjwXaOZBj+USNsGb9U6MZl9rWvRG32/avQg=' 'sha256-iLbIMIrQIZTkxEPa+rYuuJ/xOZG2G8FBnyHES0ItUzg=' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; font-src 'self'; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://firebase.googleapis.com https://firebaseinstallations.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 
+# Kept for defence in depth, but currently unreachable: www.shykov.dev is
+# 301'd to the apex at the Cloudflare edge, before Pages applies _headers, so
+# no response ever carries this rule. The apex sends includeSubDomains, which
+# covers www for any client that has already seen it. Semrush reports the www
+# subdomain as "doesn't support HSTS" for this reason — expected, not a gap.
 https://www.shykov.dev/*
   Strict-Transport-Security: max-age=31536000; includeSubDomains

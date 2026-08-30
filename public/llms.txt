@@ -13,6 +13,7 @@ links to public projects.
 - Experience: https://shykov.dev/experience
 - Writing: https://shykov.dev/blog
 - The Engineer Changelog: https://shykov.dev/blog/the-engineer-changelog
+- From Software Engineer to Product Engineer: https://shykov.dev/blog/software-engineer-to-product-engineer
 
 ## Projects
 

@@ -18,13 +18,13 @@ redirect/rules deploy artifacts.
 ```bash
 npm install        # install dependencies
 npm run dev        # Vite dev server with HMR
-npm run build      # tsc -b (typecheck) then vite build → dist/
+npm run build      # tsc -b (typecheck), vite build, then prerender routes → dist/
 npm run lint       # ESLint over the repo
 npm run preview    # serve the production build locally
 npm test           # Vitest smoke suite over src/lib/ + static post registry
 # Production deploys run via GitHub Actions → Cloudflare Pages (project: shykov-dev)
 # on merge to master. Manual deploy: npx wrangler pages deploy dist --project-name=shykov-dev
-# firebase deploy now only updates the legacy m-shykov.web.app 301 redirects + Firestore rules.
+# firebase deploy only pushes Firestore rules now — there is no Firebase Hosting surface.
 ```
 
 `npm run build` is the primary gate — it runs `tsc -b`, so type errors fail the
@@ -46,7 +46,6 @@ src/
   content/       Static Markdown posts + post registry
   pages/         Route views (Home, Experience, Blog, PostArticle, NotFound)
   lib/           Pure helpers + lazy analytics boundary + tests
-  types/         Shared TypeScript interfaces (Post, User)
   firebase.ts    Analytics-only Firebase init, dynamically imported after consent
   index.css      Single stylesheet: @theme tokens, @font-face, component classes
   App.tsx        Router; main.tsx mounts it; test-setup.ts bootstraps Vitest

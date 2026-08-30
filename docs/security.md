@@ -18,11 +18,13 @@
 
 ## Legacy domain redirects
 
-- `firebase.json` redirects `m-shykov.web.app` → `shykov.dev` with 301s. The
-  bare root `/` needs its own redirect entry — the `/:path*` pattern does not
-  match it (this gap once left the old domain serving a stale copy of the
-  homepage). After changing redirects, run `firebase deploy --only hosting` and
-  verify: `curl -sI https://m-shykov.web.app/ | grep -iE 'HTTP|location'`.
+- **Retired.** The `m-shykov.web.app` Firebase Hosting site was taken down and
+  its `hosting` block removed from `firebase.json`; every path returns 404
+  rather than a 301 to `shykov.dev` (verified 2026-08-30). Nothing left to
+  deploy or monitor here. Historical note, since it cost real time once: the
+  bare root `/` needed its own redirect entry because `/:path*` never matched
+  it, and that gap left the old domain serving a stale copy of the homepage for
+  weeks.
 
 ## Secrets & credentials
 
