@@ -26,8 +26,11 @@
 
 ## Build gate
 
-- `npm run build` runs **`tsc -b` then `vite build`** — type errors fail the build even
-  though `vite build` alone would not catch them. This is the project's gate.
+- `npm run build` runs **`tsc -b`, `vite build`, then `scripts/prerender.mjs`** — type
+  errors fail the build even though `vite build` alone would not catch them, and the
+  prerender step fails loudly if any sitemap route renders without a title. This is the
+  project's gate. Prerendering drives headless **system Chrome** via `puppeteer-core`
+  (present locally and on GitHub runners — no browser download).
 - **`npm test`** runs a minimal **Vitest** smoke suite over the pure helpers in
   `src/lib/` and the static post registry (consent state, post-date formatting,
   Markdown post parsing). It is intentionally small —
@@ -38,15 +41,15 @@
 
 ```bash
 npm run dev        # Vite dev server with HMR
-npm run build      # tsc -b (typecheck) then vite build → dist/
+npm run build      # tsc -b (typecheck), vite build, then prerender routes → dist/
 npm run lint       # ESLint over the repo
 npm run preview    # serve the production build locally
 npm test           # Vitest smoke suite over src/lib/ + static post registry
 ```
 
 Production deploys run via GitHub Actions → Cloudflare Pages (project `shykov-dev`,
-domain `shykov.dev`) on merge to master. `firebase deploy` now only maintains the
-legacy `m-shykov.web.app` 301 redirects + Firestore rules.
+domain `shykov.dev`) on merge to master. `firebase deploy` now only pushes Firestore
+rules — the legacy `m-shykov.web.app` hosting site is retired.
 
 ## Static analysis (SonarCloud)
 

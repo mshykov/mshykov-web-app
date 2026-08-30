@@ -1,21 +1,22 @@
 # SEO — shykov.dev
 
-This site (Maksym Shykov's personal site/blog) is a client-rendered React + Vite SPA on
-Cloudflare Pages; routes are `/`, `/experience`, `/blog`, and static article routes
-under `/blog/<slug>`. Canonical domain: `https://shykov.dev`.
+This site (Maksym Shykov's personal site/blog) is a React + Vite SPA, **prerendered to
+static HTML per route at build time**, on Cloudflare Pages; routes are `/`,
+`/experience`, `/blog`, and static article routes under `/blog/<slug>`. Canonical
+domain: `https://shykov.dev`.
 
 ## SPA SEO checklist (the pattern this site follows)
 
 - **Per-route metadata.** A single component sets a unique title, description, and
   `rel="canonical"` per route. Non-indexable routes (404) set `noindex`.
+- **Prerendered HTML.** `scripts/prerender.mjs` (runs inside `npm run build`) snapshots
+  every sitemap route in headless Chrome and writes real per-route HTML into `dist/` —
+  content and per-route meta exist without JS. React hydrates on top (`src/main.tsx`).
 - **Crawlability.** Ship static `robots.txt` (with a `Sitemap:` line) and
   `sitemap.xml`; never block CSS/JS. Adding a route → add it to the sitemap in the
-  same change.
+  same change — **the sitemap is also the prerender route list.**
 - **Structured data.** Keep JSON-LD (`WebSite` / `Person`) in the document head; update
   it when role/employer/social profiles change.
-- **SPA social-preview caveat.** Google renders JS, but non-JS social unfurlers read
-  only the static initial HTML. Without SSR/prerender, per-route OG previews fall back
-  to the home page's tags — see the limitation below.
 - **Verify post-deploy** with Search Console URL Inspection + the Rich Results Test.
 
 ## What's implemented
@@ -31,6 +32,7 @@ under `/blog/<slug>`. Canonical domain: `https://shykov.dev`.
 | Alt text | avatar + all company logos |
 | Descriptive anchor text | yes; no "click here" |
 | HTTPS / mobile / fast | Cloudflare Pages + Vite build |
+| Prerendered per-route HTML | `scripts/prerender.mjs` in `npm run build`; routes from `public/sitemap.xml` |
 
 ## Conventions to keep
 
@@ -47,11 +49,14 @@ under `/blog/<slug>`. Canonical domain: `https://shykov.dev`.
   `index.html` too.
 - When adding a route or post, also add it to `public/sitemap.xml`.
 
-## Known limitation
+## History note (why prerendering exists)
 
-No SSR/prerender: **non-JS social scrapers only see `index.html`'s static (Home) OG
-tags**, so per-route social previews fall back to Home. Google itself renders JS, so
-per-route SEO is fully effective. Fixing social previews would require prerendering/SSR.
+The site originally shipped as a pure SPA shell on the theory that "Google renders JS,
+so per-route SEO is fully effective." **Empirically false for a new low-authority
+domain**: after 5 weeks live, an exact-title search for a published article returned
+nothing — the render queue never got to us, and non-JS consumers (AI crawlers, Bing,
+archival fetches) saw an empty page. Snapshot prerendering (July 2026) fixed both
+search indexing and per-route social previews. Don't regress to shell-only serving.
 
 ## Verify after deploy
 
