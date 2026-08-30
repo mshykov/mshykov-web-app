@@ -178,20 +178,11 @@
     </script>
   </head>
   <body>
-    <noscript>
-      <main>
-        <h1>Maksym Shykov | Engineering Lead</h1>
-        <p>
-          Engineering leader and hands-on builder. I help teams ship AI products
-          and share practical software leadership notes.
-        </p>
-        <nav aria-label="Primary pages">
-          <a href="/experience">Experience</a>
-          <a href="/blog">Writing</a>
-          <a href="/blog/the-engineer-changelog">The Engineer Changelog</a>
-        </nav>
-      </main>
-    </noscript>
+    <!-- Deliberately no static no-JS fallback block here: prerendering
+         (scripts/prerender.mjs) ships each route's real content inside #root,
+         so JS-disabled visitors and non-JS crawlers already get the full page.
+         A static block is copied into every snapshot, which previously put
+         Home's heading at the top of every route. -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
