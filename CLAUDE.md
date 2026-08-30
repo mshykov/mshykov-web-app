@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Maksym Shykov's personal website/blog — a React SPA prerendered to static HTML per route at build time, served from Cloudflare Pages. Blog posts are Markdown files committed with the app (`src/content/posts/*.md`); there is no backend and no database. Firebase remains only for consent-gated Analytics and the legacy `m-shykov.web.app` 301 redirects (plus the Firestore rules that deploy surface still carries — see "Legacy Firebase surface" below).
+Maksym Shykov's personal website/blog — a React SPA prerendered to static HTML per route at build time, served from Cloudflare Pages. Blog posts are Markdown files committed with the app (`src/content/posts/*.md`); there is no backend and no database. Firebase remains only for consent-gated Analytics, plus dormant Firestore rules (see "Legacy Firebase surface" below).
 
 ## Docs
 
@@ -34,7 +34,7 @@ npm run preview    # serve the production build locally
 npm test           # Vitest smoke suite over src/lib/ + static post registry
 # Production hosting is Cloudflare Pages (project: shykov-dev, domain: shykov.dev),
 # deployed by GitHub Actions on merge to master (.github/workflows/cloudflare-pages-merge.yml).
-# firebase deploy now only updates the legacy m-shykov.web.app 301 redirects + Firestore rules.
+# firebase deploy only pushes Firestore rules now — there is no Firebase Hosting surface.
 ```
 
 `npm run build` is the primary gate — it runs `tsc -b`, so type errors fail the build even though Vite alone would not catch them, and the prerender step fails loudly if any sitemap route renders without a title. `npm test` runs a small Vitest suite over the pure helpers in `src/lib/`, the static post registry, and the CSP-hash/security-header invariants; component/integration tests are intentionally out of scope.
@@ -53,13 +53,19 @@ Firebase config is read from `VITE_FIREBASE_*` env vars (see `.env.example`) and
 ## Legacy Firebase surface
 
 The blog no longer uses Firestore — posts are static Markdown (see the content
-pipeline above). `firebase.json`, `firestore.rules`, and `firestore.indexes.json`
-remain only for the legacy deploy surface: `firebase deploy --only hosting`
-maintains the `m-shykov.web.app` → `shykov.dev` 301 redirects (note: the bare
-root `/` needs its own redirect entry — `/:path*` doesn't match it), and the
-rules keep all Firestore client writes denied should the project ever be probed.
-The public app must never import `firebase/firestore` or `firebase/auth` —
-`src/lib/publicPath.test.ts` fails if it does.
+pipeline above).
+
+The `m-shykov.web.app` Firebase Hosting site is **retired**: it was taken down
+and its `hosting` block removed from `firebase.json`. Every path there returns
+404 instead of a 301 to `shykov.dev` (verified 2026-08-30) — deliberate, not a
+regression to chase. Don't revive it; re-point any inbound link that still
+matters.
+
+`firestore.rules` and `firestore.indexes.json` remain so
+`firebase deploy --only firestore:rules` can keep all Firestore client writes
+denied should the project ever be probed. The public app must never import
+`firebase/firestore` or `firebase/auth` — `src/lib/publicPath.test.ts` fails if
+it does.
 
 ## SEO
 

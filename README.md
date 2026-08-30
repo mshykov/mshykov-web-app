@@ -24,7 +24,7 @@ npm run preview    # serve the production build locally
 npm test           # Vitest smoke suite over src/lib/ + static post registry
 # Production deploys run via GitHub Actions → Cloudflare Pages (project: shykov-dev)
 # on merge to master. Manual deploy: npx wrangler pages deploy dist --project-name=shykov-dev
-# firebase deploy now only updates the legacy m-shykov.web.app 301 redirects + Firestore rules.
+# firebase deploy only pushes Firestore rules now — there is no Firebase Hosting surface.
 ```
 
 `npm run build` is the primary gate — it runs `tsc -b`, so type errors fail the

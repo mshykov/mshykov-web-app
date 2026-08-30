@@ -12,7 +12,7 @@ they outrank cosmetic cleanups.
 | # | Item | Category | I | R | E | **P** | Status |
 |---|------|----------|---|---|---|-------|--------|
 | 1 | Markdown renderer has no unit tests | Test | 3 | 3 | 1 | **30** | open |
-| 2 | Legacy `m-shykov.web.app` redirects unwatched + hand-deployed | Infra | 2 | 3 | 1 | **25** | open |
+| 2 | Legacy `m-shykov.web.app` redirects unwatched + hand-deployed | Infra | 2 | 3 | 1 | **25** | retired |
 | 3 | Prerender asserts titles but not body content | Test | 3 | 4 | 3 | **21** | open |
 | 4 | Double analytics pipeline (gtag + Firebase Analytics) | Architecture | 3 | 2 | 2 | **20** | open |
 | 5 | Lighthouse CI audits only the home page | Test | 2 | 2 | 1 | **20** | open |
@@ -33,13 +33,13 @@ browser. A regression garbles article bodies with a green build. Fix:
 table-driven tests over `parseMarkdownBlocks` covering each block type plus the
 figure-shortcode split in `splitPostContent`.
 
-**2 — Legacy redirect surface is unwatched and manual.**
-`m-shykov.web.app` 301s live in `firebase.json` and deploy only when someone
-runs `firebase deploy --only hosting` from a laptop. The bare-root case was
-silently serving a stale copy of the whole site for weeks before an audit found
-it (see [seo.md](seo.md) and [security.md](security.md)). Fix: a weekly cron
-workflow that curls the root and one deep path and fails if either stops being
-a 301 to `shykov.dev`.
+**2 — Legacy redirect surface is unwatched and manual.** *Retired 2026-08-30.*
+The debt was real: `m-shykov.web.app` 301s lived in `firebase.json` and shipped
+only when someone ran `firebase deploy --only hosting` from a laptop, and the
+bare-root case silently served a stale copy of the whole site for weeks before
+an audit caught it. Resolved by removing the surface rather than monitoring it —
+the Hosting site is down and the `hosting` block is gone from `firebase.json`.
+The planned uptime cron is moot; old inbound links now 404 by choice.
 
 **3 — Prerender output is only title-checked.**
 `scripts/prerender.mjs` throws if a route renders without a `<title>`, which
