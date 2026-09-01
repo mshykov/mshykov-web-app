@@ -11,8 +11,12 @@ const highlights = [
     context: 'Shipped Setapp Mobile at MacPaw under the Digital Markets Act window',
   },
   {
-    metric: 'AI paywalls & ML-driven personalization',
-    context: 'Released recommendation systems and pricing optimization for the Headway app',
+    metric: '99.5% crash-free sessions',
+    context: 'Up from 95% on the Headway app iOS client, as EM of the Foundation team',
+  },
+  {
+    metric: 'AI paywalls & ML recommendations in production',
+    context: 'Shipped both on the Headway app; the paywall MVP predicted the right price 65% of the time',
   },
   {
     metric: '95% availability at 0.2s response time',
@@ -20,11 +24,11 @@ const highlights = [
   },
   {
     metric: '2.5× faster release cycle',
-    context: 'Streamlined desktop and mobile release processes across two platforms',
+    context: 'Rebuilt the Setapp Desktop release process, making weekly releases routine',
   },
   {
-    metric: '14 engineers across two cross-functional teams',
-    context: 'Hired, built, and managed desktop and mobile orgs at MacPaw',
+    metric: '20+ engineers hired and managed',
+    context: 'Across MacPaw and Headway — desktop, mobile, and web teams',
   },
 ];
 
@@ -97,14 +101,15 @@ const Home = () => {
 
       {/* Hero — typography-led, no decoration */}
       <section className="pt-20 md:pt-28 pb-16 md:pb-20">
-        <p className="section-label mb-5">Engineering Lead · Headway</p>
+        <p className="section-label mb-5">Engineering Manager · Goodly, Headway Inc.</p>
         <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-ink dark:text-ink-dark leading-[1.15] mb-6 text-balance">
           Leader. Mentor. Builder.
         </h1>
         <p className="text-lg text-ink-secondary dark:text-ink-secondary-dark leading-relaxed max-w-xl mb-10">
-          I run engineering teams at Headway, mentor engineers, and build
-          AI-powered products hands-on. Fifteen years in software — from QA
-          engineer at Samsung to engineering management at MacPaw and Headway.
+          I own engineering on Goodly at Headway Inc., mentor engineers, and
+          build AI-powered products hands-on. Fifteen years in software — from
+          QA engineer at Samsung to engineering management at MacPaw and
+          Headway.
         </p>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <Link to="/experience" className="btn-ink">

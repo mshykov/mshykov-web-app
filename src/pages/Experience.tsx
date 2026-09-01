@@ -1,40 +1,64 @@
 import Seo from '../components/Seo';
 
+interface Role {
+  role: string;
+  company: string;
+  /** The product worked on, where the company alone is not specific enough. */
+  project?: string;
+  companyUrl?: string;
+  logoUrl?: string;
+  period: string;
+  description: string;
+}
+
+// Company identity repeated across several roles. Factored out so adding a
+// role at the same employer does not mean restating its name, URL and logo.
+const HEADWAY = {
+  company: 'Headway Inc.',
+  companyUrl: 'https://makeheadway.com',
+  logoUrl: '/logos/headway.jpeg',
+};
+
+const MACPAW = {
+  company: 'MacPaw',
+  companyUrl: 'https://macpaw.com',
+  logoUrl: '/logos/macpaw_logo.jpeg',
+};
+
 const Experience = () => {
-  const experiences = [
+  const experiences: Role[] = [
     {
+      ...HEADWAY,
       role: 'Engineering Manager',
-      company: 'Headway Inc.',
-      project: 'Headway app',
-      companyUrl: 'https://makeheadway.com',
-      logoUrl: '/logos/headway.jpeg',
-      period: 'Feb 2025 – Present',
-      description: 'Led a cross-functional team of eight engineers at Foundation, enhancing iOS and Android clients. Implemented a machine learning recommendation system to personalize interactions. Released AI paywalls for optimal pricing suggestions. Led initiatives to improve user experience and reduce technical debt.',
+      project: 'Goodly',
+      period: 'Apr 2026 – Present',
+      description: 'One of three people on the product leadership team, owning every engineering decision. Authored 200+ merged changes across eight repositories in a quarter — web, iOS, Android, Go services, GCP infrastructure — and shipped the releases end to end. Replaced magic-link sign-in with email and a one-time code. Stood up thegoodly.com as a full mirror of the Shopify storefront, then made it the primary site. Built the product analytics from nothing, and set commit, release and review conventions across every repository.',
     },
     {
+      ...HEADWAY,
       role: 'Engineering Manager',
-      company: 'MacPaw',
+      project: 'Headway app, Foundation team',
+      period: 'Feb 2025 – Apr 2026',
+      description: 'Led a cross-functional team of eight engineers on the iOS and Android clients. Raised iOS crash-free sessions from 95% to 99.5% over two quarters. Guided three backend engineers through moving 60%+ of a seven-year-old Cloud Functions backend onto a REST API. Shipped an ML recommendation system and an AI paywall MVP to production; the paywall picked the right price 65% of the time, above chance and short of our 85% bar, and the work was paused when the payback period came out too long. Ran one engineering team against three PM stakeholders from separate product teams.',
+    },
+    {
+      ...MACPAW,
+      role: 'Engineering Manager',
       project: 'Setapp and Setapp Mobile for iOS',
-      companyUrl: 'https://macpaw.com',
-      logoUrl: '/logos/macpaw_logo.jpeg',
       period: 'Oct 2022 – Nov 2024',
-      description: 'Released Setapp Mobile for iOS, the EU\'s first alternative app marketplace. Ensured 100% of releases matched the deadlines. Improved AI Assistance and Smart Search feature availability to 95% and optimized response time to 0.2 sec. Hired, built, and managed cross-functional teams for Desktop (9 engineers) and Mobile (5 engineers). Streamlined release processes, reducing time by 2.5x.',
+      description: 'Released Setapp Mobile for iOS, the EU\'s first alternative app marketplace, hitting every release date; ran the proof of concept on site with Apple in Cork. MacPaw has since discontinued the product. Brought AI Assistant and Smart Search to Setapp Desktop: availability up from 80% to 95%, response time down from ~1s to 0.2s, feature adoption up from 65% to 80%. Hired, built, and managed cross-functional teams for Desktop (9 engineers) and Mobile (5 engineers).',
     },
     {
+      ...MACPAW,
       role: 'Area Lead / Senior QA Engineer',
-      company: 'MacPaw',
       project: 'Setapp',
-      companyUrl: 'https://macpaw.com',
-      logoUrl: '/logos/macpaw_logo.jpeg',
       period: 'Apr 2020 – Oct 2022',
-      description: 'Managed a team of five QA engineers, ensuring transparent promotion processes and creating development plans. As an engineer, implemented integration testing reducing bugs by ~30%, and created comprehensive UI, functional, and backend tests in JavaScript and Kotlin.',
+      description: 'Managed a team of five QA engineers, ensuring transparent promotion processes and creating development plans. Led the interview stages behind seven hires. As an engineer, implemented integration testing that reduced bugs by ~30%, rebuilt the Setapp Desktop release process to cut release time 2.5× and make weekly releases routine, and created UI, functional, and backend tests in JavaScript and Kotlin.',
     },
     {
+      ...MACPAW,
       role: 'QA Engineer',
-      company: 'MacPaw',
       project: 'Setapp',
-      companyUrl: 'https://macpaw.com',
-      logoUrl: '/logos/macpaw_logo.jpeg',
       period: 'Jul 2019 – Mar 2020',
       description: 'Responsible for testing and releases of the B2C web cabinet. Created and maintained UI and functional tests using JavaScript and WebdriverIO.',
     },
@@ -73,12 +97,12 @@ const Experience = () => {
   const education = [
     {
       name: 'Master\'s in Metrology and Information Technology',
-      issuer: 'National Technical University of Ukraine "KPI"',
+      issuer: 'National Technical University of Ukraine "Igor Sikorsky Kyiv Polytechnic Institute"',
       year: '2008 – 2010',
     },
     {
       name: 'Bachelor\'s in Metrology and Information Technology',
-      issuer: 'National Technical University of Ukraine "KPI"',
+      issuer: 'National Technical University of Ukraine "Igor Sikorsky Kyiv Polytechnic Institute"',
       year: '2004 – 2008',
     }
   ];
